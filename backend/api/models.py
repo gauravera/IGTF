@@ -51,6 +51,7 @@ class Category(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     icon = models.CharField(max_length=10)  # For emoji icons
+    image = models.ImageField(upload_to='categories/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

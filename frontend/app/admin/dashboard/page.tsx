@@ -1375,6 +1375,7 @@ export default function AdminDashboard() {
 
               {activeTab === "categories" && (
                 <>
+                  {/* Category Name */}
                   <div>
                     <label className="block text-sm font-medium mb-2">Category Name</label>
                     <input
@@ -1382,9 +1383,11 @@ export default function AdminDashboard() {
                       name="name"
                       defaultValue={editingItem?.name}
                       required
-                      className="w-full px-4 py-2 rounded-md bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                      className="w-full px-4 py-2 rounded-md bg-background border border-border focus:border-primary"
                     />
                   </div>
+
+                  {/* Icon */}
                   <div>
                     <label className="block text-sm font-medium mb-2">Icon (Emoji)</label>
                     <input
@@ -1392,10 +1395,36 @@ export default function AdminDashboard() {
                       name="icon"
                       defaultValue={editingItem?.icon}
                       placeholder="e.g., 🔧"
-                      required
-                      className="w-full px-4 py-2 rounded-md bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                      className="w-full px-4 py-2 rounded-md bg-background border border-border focus:border-primary"
                     />
                   </div>
+
+                  {/* Image Upload */}
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Category Image</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                      required={!editingItem}
+                      className="w-full px-4 py-2 rounded-md bg-background border border-border focus:border-primary"
+                    />
+
+                    {editingItem && editingItem.image_url && (
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Current image:{" "}
+                        <a
+                          href={editingItem.image_url}
+                          target="_blank"
+                          className="text-blue-600 underline"
+                        >
+                          View
+                        </a>
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Description */}
                   <div>
                     <label className="block text-sm font-medium mb-2">Description</label>
                     <textarea
@@ -1403,11 +1432,12 @@ export default function AdminDashboard() {
                       defaultValue={editingItem?.description}
                       rows={3}
                       required
-                      className="w-full px-4 py-2 rounded-md bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none resize-none"
+                      className="w-full px-4 py-2 rounded-md bg-background border border-border focus:border-primary resize-none"
                     />
                   </div>
                 </>
               )}
+
 
               {activeTab === "gallery" && (
                 <>

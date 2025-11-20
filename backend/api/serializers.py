@@ -51,9 +51,12 @@ class VisitorRegistrationSerializer(serializers.ModelSerializer):
     
 
 class CategorySerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ['id', 'name', 'description', 'icon', 'image', 'image_url', 'created_at', 'updated_at']
+
 
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
@@ -65,9 +68,4 @@ class GalleryImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GalleryImage
-        fields = '__all__'
-
-    def get_image_url(self, obj):
-        if obj.image:
-            return obj.image.url
-        return None
+        fields = ['id', 'title', 'description', 'image', 'image_url', 'created_at', 'updated_at']

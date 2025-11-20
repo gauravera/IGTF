@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth.models import User
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 # class ExhibitorRegistrationViewSet(viewsets.ModelViewSet):
@@ -63,9 +64,15 @@ class VisitorRegistrationViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
 
 class CategoryViewSet(viewsets.ModelViewSet):
+    parser_classes = (MultiPartParser, FormParser)
     queryset = Category.objects.all().order_by('-created_at')
     serializer_class = CategorySerializer
     permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        image = request.FILES["image"]
+        obj = Category.objects.create(image=image)
+        return Response({"url": obj.image.url})
 
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all().order_by('-start_date')
@@ -75,7 +82,7 @@ class EventViewSet(viewsets.ModelViewSet):
 class GalleryImageViewSet(viewsets.ModelViewSet):
     queryset = GalleryImage.objects.all().order_by('-created_at')
     serializer_class = GalleryImageSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
 
 
