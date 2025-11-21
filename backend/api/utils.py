@@ -48,9 +48,8 @@ def create_tokens_for_user(user):
 # ======================================================
 def upload_to_s3(file_obj, folder="categories"):
     """
-    Uploads any file to S3 and returns a public URL.
+    Uploads file to S3 and returns CloudFront URL if configured.
     """
-
     s3 = boto3.client(
         "s3",
         aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
@@ -66,15 +65,18 @@ def upload_to_s3(file_obj, folder="categories"):
         Fileobj=file_obj,
         Bucket=settings.AWS_STORAGE_BUCKET_NAME,
         Key=file_key,
-        ExtraArgs={
-            "ContentType": file_obj.content_type
-        }
-
+        ExtraArgs={"ContentType": file_obj.content_type}
     )
 
-    # Final public file URL
-    return f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_S3_REGION_NAME}.amazonaws.com/{file_key}"
+    # 🔥 Use CloudFront URL if configured
+    cdn = getattr(settings, "CLOUDFRONT_URL", "").rstrip("/")
+    if cdn:
+        return f"{cdn}/{file_key}"
 
+    # fallback to S3
+    bucket = settings.AWS_STORAGE_BUCKET_NAME
+    region = settings.AWS_S3_REGION_NAME
+    return f"https://{bucket}.s3.{region}.amazonaws.com/{file_key}"
 
 
 def delete_from_s3(file_url):

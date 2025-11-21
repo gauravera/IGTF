@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "api",
 ]
 FRONTEND_URL = config("FRONTEND_URL")
+CLOUDFRONT_URL = config("CLOUDFRONT_URL")
 
 AUTH_USER_MODEL = "api.User"
 
