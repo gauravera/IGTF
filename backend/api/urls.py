@@ -2,7 +2,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
-    AdminTokenObtainPairView,
+    LoginView,               # unified JWT login
     create_admin_user,
     create_team_user,
     list_team_users,
@@ -10,7 +10,6 @@ from .views import (
     send_otp,
     verify_otp,
     create_password,
-    team_login,                     # FIXED: Correct login function
     ExhibitorRegistrationViewSet,
     VisitorRegistrationViewSet,
     CategoryViewSet,
@@ -26,25 +25,32 @@ router.register(r'events', EventViewSet, basename='events')
 router.register(r'gallery', GalleryImageViewSet, basename='gallery')
 
 urlpatterns = [
-    # Admin login
-    path('api/token/', AdminTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # ---------------------------------
+    # SINGLE LOGIN ENDPOINT
+    # ---------------------------------
+    path('api/login/', LoginView.as_view(), name='login'),
 
-    # Bootstrap admin creation
+    # ---------------------------------
+    # Admin creation (first time only)
+    # ---------------------------------
     path('api/create-admin/', create_admin_user),
 
-    # Team user management
+    # ---------------------------------
+    # Team management
+    # ---------------------------------
     path('api/team/create/', create_team_user),
     path('api/team/list/', list_team_users),
     path('api/team/delete/<int:user_id>/', delete_team_user),
 
-    # Password setup flow
+    # ---------------------------------
+    # OTP + password setup
+    # ---------------------------------
     path('api/password/send-otp/', send_otp),
     path('api/password/verify-otp/', verify_otp),
     path('api/password/create/', create_password),
 
-    # Team login (Manager/Sales)
-    path('api/team/login/', team_login),
-
-    # Default router mappings
+    # ---------------------------------
+    # CRUD router
+    # ---------------------------------
     path('api/', include(router.urls)),
 ]

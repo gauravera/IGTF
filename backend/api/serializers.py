@@ -2,11 +2,11 @@
 from rest_framework import serializers
 from .models import (
     ExhibitorRegistration,
-    VistorRegistration,
+    VisitorRegistration,
     Category,
     Event,
     GalleryImage,
-    TeamUser,
+    User,
 )
 
 class ExhibitorRegistrationSerializer(serializers.ModelSerializer):
@@ -36,7 +36,7 @@ class VisitorRegistrationSerializer(serializers.ModelSerializer):
     industry_interest = serializers.CharField(source='industry')
 
     class Meta:
-        model = VistorRegistration
+        model = VisitorRegistration
         fields = (
             'id', 'first_name', 'last_name', 'company_name', 'email_address',
             'phone_number', 'industry_interest', 'created_at', 'updated_at'
@@ -91,8 +91,8 @@ class GalleryImageSerializer(serializers.ModelSerializer):
         return None
 
 
-class TeamUserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TeamUser
+        model = User
         fields = ['id', 'name', 'email', 'role', 'is_active', 'is_password_set', 'created_at']
         read_only_fields = ['id', 'is_active', 'is_password_set', 'created_at']

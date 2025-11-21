@@ -1,23 +1,79 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import (
     ExhibitorRegistration,
-    VistorRegistration,
+    VisitorRegistration,
     Category,
     Event,
     GalleryImage,
-    TeamUser,
-    PasswordSetupToken
+    User,
+    PasswordSetupToken,
 )
 
+
 # ===============================
-# TEAM USER
+# CUSTOM USER ADMIN (Unified User)
 # ===============================
-@admin.register(TeamUser)
-class TeamUserAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "email", "role", "is_active", "is_password_set", "created_at")
-    search_fields = ("name", "email", "role")
-    list_filter = ("role", "is_active", "is_password_set")
-    readonly_fields = ("created_at", "updated_at")
+@admin.register(User)
+class UserAdmin(BaseUserAdmin):
+
+    # Columns in admin list view
+    list_display = (
+        "id",
+        "get_full_name",
+        "username",
+        "email",
+        "role",
+        "is_active",
+        "is_password_set",
+        "date_joined",
+        "last_login",
+        "is_superuser",
+    )
+
+    list_filter = ("role", "is_active", "is_superuser", "is_password_set")
+
+    search_fields = ("username", "email", "first_name", "last_name")
+
+    ordering = ("id",)
+
+    # Hide Django’s built-in staff flag since you don’t use it
+    exclude = ("is_staff",)
+
+    # computed full name
+    def get_full_name(self, obj):
+        full = f"{obj.first_name} {obj.last_name}".strip()
+        return full or "(No Name)"
+    get_full_name.short_description = "Name"
+
+    # User edit form layout
+    fieldsets = (
+        ("Login Details", {"fields": ("username", "password")}),
+        ("Personal Info", {"fields": ("first_name", "last_name", "email")}),
+        ("Role & Access", {
+            "fields": (
+                "role",
+                "is_active",
+                "is_superuser",
+                "is_password_set",
+            )
+        }),
+        ("Important Dates", {"fields": ("last_login", "date_joined")}),
+    )
+
+    # User create form layout
+    add_fieldsets = (
+        (None, {
+            "classes": ("wide",),
+            "fields": (
+                "username",
+                "email",
+                "role",
+                "password1",
+                "password2",
+            ),
+        }),
+    )
 
 
 # ===============================
@@ -25,8 +81,8 @@ class TeamUserAdmin(admin.ModelAdmin):
 # ===============================
 @admin.register(PasswordSetupToken)
 class PasswordSetupTokenAdmin(admin.ModelAdmin):
-    list_display = ("id", "user_email", "token", "created_at")
-    search_fields = ("user_email", "token")
+    list_display = ("id", "user", "token", "created_at")
+    search_fields = ("user__email", "token")
     readonly_fields = ("created_at",)
 
 
@@ -45,16 +101,16 @@ class ExhibitorRegistrationAdmin(admin.ModelAdmin):
         "status",
         "created_at",
     )
+    readonly_fields = ("created_at",)
     list_filter = ("status",)
     search_fields = ("company_name", "contact_person", "email")
-    readonly_fields = ("created_at",)
 
 
 # ===============================
 # VISITOR REGISTRATION
 # ===============================
-@admin.register(VistorRegistration)
-class VistorRegistrationAdmin(admin.ModelAdmin):
+@admin.register(VisitorRegistration)
+class VisitorRegistrationAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "first_name",
@@ -65,9 +121,9 @@ class VistorRegistrationAdmin(admin.ModelAdmin):
         "industry_interest",
         "created_at",
     )
-    search_fields = ("first_name", "last_name", "email", "company")
-    list_filter = ("industry_interest",)
     readonly_fields = ("created_at",)
+    list_filter = ("industry_interest",)
+    search_fields = ("first_name", "last_name", "email", "company")
 
 
 # ===============================
@@ -76,8 +132,8 @@ class VistorRegistrationAdmin(admin.ModelAdmin):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "icon", "created_at")
-    search_fields = ("name",)
     readonly_fields = ("created_at",)
+    search_fields = ("name",)
 
 
 # ===============================
@@ -91,12 +147,12 @@ class EventAdmin(admin.ModelAdmin):
         "location",
         "start_date",
         "end_date",
-        "is_published",
+        "is_active",
         "created_at",
     )
-    list_filter = ("is_published", "start_date")
-    search_fields = ("title", "location")
     readonly_fields = ("created_at",)
+    list_filter = ("is_active", "start_date")
+    search_fields = ("title", "location")
 
 
 # ===============================
@@ -105,6 +161,6 @@ class EventAdmin(admin.ModelAdmin):
 @admin.register(GalleryImage)
 class GalleryImageAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "type", "display_order", "created_at")
+    readonly_fields = ("created_at",)
     list_filter = ("type",)
     search_fields = ("title",)
-    readonly_fields = ("created_at",)

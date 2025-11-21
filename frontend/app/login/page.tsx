@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const API_URL = `${BASE_URL}/token/`; // FIXED: correct endpoint
+const API_URL = `${BASE_URL}/login/`; // FIXED: correct endpoint
 
 export default function LoginPage() {
   const router = useRouter();

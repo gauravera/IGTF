@@ -1,60 +1,33 @@
-# api/utils.py
-
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import get_user_model
 
-User = get_user_model()
-
-# ==========================================
-# ADMIN TOKEN (Django superuser login)
-# ==========================================
-class AdminTokenObtainPairSerializer(TokenObtainPairSerializer):
-    """
-    Creates JWT for Django Admin (superuser).
-    Only clean fields are encoded INSIDE the token,
-    not returned separately in the response.
-    """
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
 
-        # Fields encoded into JWT
+        # Keep claims INSIDE JWT (still useful)
         token["user_id"] = user.id
         token["username"] = user.username
-        token["role"] = "admin"
+        token["email"] = user.email
+        token["role"] = "admin" if user.is_superuser else getattr(user, "role", None)
 
         return token
 
-    # DO NOT override validate() — we want SimpleJWT default behaviour.
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        # Only return tokens — no extra fields
+        return {
+            "refresh": data["refresh"],
+            "access": data["access"],
+        }
 
 
-# ==========================================
-# TEAM USER TOKEN (Manager / Sales)
-# ==========================================
-def create_token_for_teamuser(team_user):
-    """
-    Creates JWT for TeamUser. Both tokens contain:
-    - user_id
-    - username
-    - role
-    """
-
-    refresh = RefreshToken.for_user(team_user)
-
-    # Add custom claims to refresh token
-    refresh["user_id"] = team_user.id
-    refresh["username"] = team_user.username
-    refresh["role"] = team_user.role
-
-    # Access token also contains same fields
-    access = refresh.access_token
-    access["user_id"] = team_user.id
-    access["username"] = team_user.username
-    access["role"] = team_user.role
-
+def create_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
     return {
         "refresh": str(refresh),
-        "access": str(access),
+        "access": str(refresh.access_token),
     }

@@ -17,6 +17,9 @@ export default function CreatePasswordPage() {
     const [email, setEmail] = useState("");
     const [otp, setOtp] = useState("");
     const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -88,12 +91,26 @@ export default function CreatePasswordPage() {
         setLoading(true);
         setError("");
 
+        // Validate
+        if (!username) {
+            setError("Username is required");
+            setLoading(false);
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            setError("Passwords do not match");
+            setLoading(false);
+            return;
+        }
+
         try {
             const response = await fetch(`${BASE_URL}/password/create/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     email,
+                    username,      // <-- ADDED
                     otp,
                     password,
                     token: inviteToken,
@@ -114,6 +131,7 @@ export default function CreatePasswordPage() {
 
         setLoading(false);
     };
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-background px-4">
@@ -195,9 +213,24 @@ export default function CreatePasswordPage() {
                     </div>
                 )}
 
-                {/* STEP 3: CREATE PASSWORD */}
+                {/* STEP 3: CREATE USERNAME + PASSWORD */}
                 {step === 3 && (
                     <div className="space-y-6">
+
+                        {/* Username */}
+                        <div>
+                            <label className="block font-medium mb-2">Username</label>
+                            <input
+                                type="text"
+                                className="w-full border px-4 py-2 rounded-md bg-background"
+                                placeholder="Enter username"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        {/* New Password */}
                         <div>
                             <label className="block font-medium mb-2">New Password</label>
                             <input
@@ -206,6 +239,19 @@ export default function CreatePasswordPage() {
                                 placeholder="Create password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        {/* Confirm Password */}
+                        <div>
+                            <label className="block font-medium mb-2">Confirm Password</label>
+                            <input
+                                type="password"
+                                className="w-full border px-4 py-2 rounded-md bg-background"
+                                placeholder="Confirm password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
                                 required
                             />
                         </div>
@@ -219,6 +265,7 @@ export default function CreatePasswordPage() {
                         </button>
                     </div>
                 )}
+
 
                 {/* STEP 4: SUCCESS */}
                 {step === 4 && (

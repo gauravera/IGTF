@@ -3,16 +3,16 @@
 import { useState } from "react";
 import { Plus, Trash2, X } from "lucide-react";
 
-interface TeamUser {
+interface User {
     id: number;
     name: string;
     email: string;
-    role: "manager" | "sales";
+    role: "admin" | "manager" | "sales"; // ADMIN ADDED
     status?: "active" | "inactive";
 }
 
 interface ManageTeamTabProps {
-    team: TeamUser[];
+    team: User[];
     loading: boolean;
     createUser: (data: { name: string; email: string; role: "manager" | "sales" }) => Promise<void>;
     deleteUser: (id: number) => Promise<void>;
@@ -92,6 +92,13 @@ export default function ManageTeamTab({
                                     >
                                         {user.status === "inactive" ? "INACTIVE" : "ACTIVE"}
                                     </span>
+
+                                    {/* ADMIN BADGE */}
+                                    {user.role === "admin" && (
+                                        <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-600 text-white">
+                                            ADMIN
+                                        </span>
+                                    )}
                                 </div>
 
                                 <div className="grid md:grid-cols-3 gap-4 text-sm">
@@ -108,13 +115,22 @@ export default function ManageTeamTab({
 
                             {/* Actions */}
                             <div className="flex gap-2">
-                                <button
-                                    onClick={() => deleteUser(user.id)}
-                                    className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-all duration-500 flex items-center gap-2"
-                                >
-                                    <Trash2 className="w-4 h-4" />
-                                    Delete
-                                </button>
+                                {user.role !== "admin" ? (
+                                    <button
+                                        onClick={() => deleteUser(user.id)}
+                                        className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-all duration-500 flex items-center gap-2"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                        Delete
+                                    </button>
+                                ) : (
+                                    <button
+                                        disabled
+                                        className="px-4 py-2 bg-gray-400 text-white rounded-md cursor-not-allowed flex items-center gap-2"
+                                    >
+                                        Admin (Locked)
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>

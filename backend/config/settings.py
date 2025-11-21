@@ -41,6 +41,8 @@ INSTALLED_APPS = [
 ]
 FRONTEND_URL = config("FRONTEND_URL")
 
+AUTH_USER_MODEL = "api.User"
+
 
 # ==============================================
 # MIDDLEWARE

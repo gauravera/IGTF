@@ -6,7 +6,7 @@ import { useState, useEffect, useCallback } from "react";
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 // "http://localhost:8000/api"
 
-interface TeamUser {
+interface User {
   id: number;
   name: string;
   email: string;
@@ -14,7 +14,7 @@ interface TeamUser {
 }
 
 export function useTeam() {
-  const [team, setTeam] = useState<TeamUser[]>([]);
+  const [team, setTeam] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
@@ -40,16 +40,32 @@ export function useTeam() {
 
       const res = await fetch(`${API_BASE}/team/list/`, {
         method: "GET",
-        headers: getAuthHeader(),
+        headers: {
+          ...getAuthHeader(),
+          "Content-Type": "application/json",
+        },
       });
 
-      if (!res.ok) throw new Error("Unauthorized");
+      if (!res.ok) {
+        if (res.status === 401 || res.status === 403) {
+          throw new Error("Unauthorized");
+        }
+        throw new Error(`Server Error: ${res.status}`);
+      }
 
       const data = await res.json();
-      setTeam(data);
+
+      // Ensure admin is visible + first in list
+      const sorted = [...data].sort((a, b) => {
+        if (a.role === "admin") return -1;
+        if (b.role === "admin") return 1;
+        return 0;
+      });
+
+      setTeam(sorted);
     } catch (err: any) {
       console.error("Fetch Team Error:", err);
-      setError("Failed to load team members.");
+      setError(err.message || "Failed to load team members.");
     } finally {
       setLoading(false);
     }
