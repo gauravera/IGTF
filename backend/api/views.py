@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model, authenticate
 from django.utils import timezone
 from django.conf import settings
 from .utils import upload_to_s3, delete_from_s3
-
+from django.db import connection
 import random
 import uuid
 from datetime import timedelta
@@ -34,6 +34,33 @@ from .serializers import (
     GalleryImageSerializer,
 )
 from .utils import CustomTokenObtainPairSerializer, create_tokens_for_user
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def health_check(request):
+    """
+    Simple health check for EB Load Balancer / CloudFront.
+    Tests:
+      - Django app running
+      - Database connection working
+    """
+    # Check DB connection
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1;")
+        db_status = "ok"
+    except Exception as e:
+        return Response({
+            "status": "error",
+            "db": str(e),
+        }, status=500)
+
+    return Response({
+        "status": "ok",
+        "db": db_status,
+    })
+
+
 
 User = get_user_model()
 
@@ -393,6 +420,7 @@ def team_login(request):
 # =====================================================================
 
 class ExhibitorRegistrationViewSet(viewsets.ModelViewSet):
+
     queryset = ExhibitorRegistration.objects.all().order_by('-created_at')
     serializer_class = ExhibitorRegistrationSerializer
     permission_classes = [AllowAny]
@@ -480,3 +508,5 @@ class GalleryImageViewSet(viewsets.ModelViewSet):
         if instance.image:
             delete_from_s3(instance.image)
         instance.delete()
+
+

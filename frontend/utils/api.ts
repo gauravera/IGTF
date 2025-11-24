@@ -28,7 +28,7 @@ export interface ExhibitorRegistration {
   designation: string;
   email_address: string;
   contact_number: string;
-  product_service: string;
+  product_category: string;
   company_address: string;
   status: "pending" | "contacted" | "paid" | "rejected";
   created_at: string;
@@ -43,7 +43,7 @@ export interface VisitorRegistration {
   phone_number: string;
   industry_interest: string;
   created_at: string;
-  status?: "contacted" | "paid" | "pending" | "rejected"; // optional
+  status: "pending" | "contacted" | "paid" | "rejected";
 }
 
 export interface Event {

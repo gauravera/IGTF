@@ -222,11 +222,16 @@ export default function DashboardClient() {
                         visitors={visitorsHook.visitors}
                         searchQuery={visitorsHook.searchQuery}
                         setSearchQuery={visitorsHook.setSearchQuery}
-                        handleDeleteVisitor={visitorsHook.handleDeleteVisitor}
+                        filterStatus={visitorsHook.filterStatus}
+                        setFilterStatus={visitorsHook.setFilterStatus}
+                        updateStatus={visitorsHook.updateStatus}
+                        isUpdating={visitorsHook.isUpdating}
                         stats={visitorsHook.stats}
                         loading={visitorsHook.loading}
                     />
+
                 )}
+
 
                 {/* EVENTS TAB */}
                 {activeTab === "events" && (

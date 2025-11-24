@@ -2,6 +2,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
+    health_check,
     LoginView,               # unified JWT login
     create_admin_user,
     create_team_user,
@@ -25,6 +26,8 @@ router.register(r'events', EventViewSet, basename='events')
 router.register(r'gallery', GalleryImageViewSet, basename='gallery')
 
 urlpatterns = [
+
+    path('api/health/', health_check, name='health'),
     # ---------------------------------
     # SINGLE LOGIN ENDPOINT
     # ---------------------------------

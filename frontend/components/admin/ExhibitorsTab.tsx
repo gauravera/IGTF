@@ -97,7 +97,7 @@ export default function ExhibitorsTab({
             exhibitor.company_name.toLowerCase().includes(q) ||
             exhibitor.contact_person_name.toLowerCase().includes(q) ||
             exhibitor.email_address.toLowerCase().includes(q) ||
-            exhibitor.product_service.toLowerCase().includes(q);
+            exhibitor.product_category.toLowerCase().includes(q);
 
         const statusMatch =
             filterStatus === "all" || exhibitor.status === filterStatus;
@@ -212,7 +212,7 @@ export default function ExhibitorsTab({
                                     </div>
                                     <div>
                                         <p className="text-sm text-muted-foreground">Product/Service</p>
-                                        <p className="font-medium">{exhibitor.product_service}</p>
+                                        <p className="font-medium">{exhibitor.product_category}</p>
                                     </div>
                                 </div>
                             </div>

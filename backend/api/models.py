@@ -75,11 +75,11 @@ class ExhibitorRegistration(models.Model):
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     company_name = models.CharField(max_length=255)
-    contact_person = models.CharField(max_length=255)
+    contact_person_name = models.CharField(max_length=255)
     designation = models.CharField(max_length=255)
-    email = models.EmailField()
+    email_address = models.EmailField()
     contact_number = models.CharField(max_length=20)
-    product = models.CharField(max_length=255)
+    product_category = models.CharField(max_length=255)
     company_address = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -95,11 +95,19 @@ class ExhibitorRegistration(models.Model):
 # VISITOR REGISTRATION
 # =====================================================
 class VisitorRegistration(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('contacted', 'Contacted'),
+        ('paid', 'Paid'),
+        ('rejected', 'Rejected'),
+    ]
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    company = models.CharField(max_length=255)
-    email = models.EmailField()
-    phone = models.CharField(max_length=20)
+    company_name = models.CharField(max_length=255)
+    email_address = models.EmailField()
+    phone_number = models.CharField(max_length=20)
     industry_interest = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

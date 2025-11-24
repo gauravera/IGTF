@@ -20,8 +20,8 @@ export function useExhibitors() {
 
       const list = Array.isArray(data)
         ? data
-        : Array.isArray(data?.data)
-        ? data.data
+        : Array.isArray(data?.results)
+        ? data.results
         : [];
 
       setExhibitors(list);

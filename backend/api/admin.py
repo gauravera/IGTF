@@ -94,16 +94,16 @@ class ExhibitorRegistrationAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "company_name",
-        "contact_person",
-        "email",
+        "contact_person_name",
+        "email_address",
         "contact_number",
-        "product",
+        "product_category",
         "status",
         "created_at",
     )
     readonly_fields = ("created_at",)
     list_filter = ("status",)
-    search_fields = ("company_name", "contact_person", "email")
+    search_fields = ("company_name", "contact_person_name", "email_address")
 
 
 # ===============================
@@ -115,15 +115,15 @@ class VisitorRegistrationAdmin(admin.ModelAdmin):
         "id",
         "first_name",
         "last_name",
-        "company",
-        "email",
-        "phone",
+        "company_name",
+        "email_address",
+        "phone_number",
         "industry_interest",
         "created_at",
     )
     readonly_fields = ("created_at",)
     list_filter = ("industry_interest",)
-    search_fields = ("first_name", "last_name", "email", "company")
+    search_fields = ("first_name", "last_name", "email_address", "company_name")
 
 
 # ===============================

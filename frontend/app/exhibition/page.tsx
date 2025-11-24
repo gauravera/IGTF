@@ -12,7 +12,7 @@ interface FormData {
   designation: string;
   email_address: string;
   contact_number: string;
-  product_service: string;
+  product_category: string;
   company_address: string;
 }
 
@@ -42,7 +42,7 @@ export default function ExhibitionPage() {
     designation: "",
     email_address: "",
     contact_number: "",
-    product_service: "",
+    product_category: "",
     company_address: "",
   });
 
@@ -137,7 +137,7 @@ export default function ExhibitionPage() {
           designation: "",
           email_address: "",
           contact_number: "",
-          product_service: "",
+          product_category: "",
           company_address: "",
         });
 
@@ -447,8 +447,8 @@ export default function ExhibitionPage() {
                 </label>
                 <select
                   id="product_service"
-                  name="product_service"
-                  value={formData.product_service}
+                  name="product_category"
+                  value={formData.product_category}
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-3 rounded-md bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-500 outline-none"

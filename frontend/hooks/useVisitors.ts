@@ -6,31 +6,33 @@ import { toast } from "sonner";
 
 export function useVisitors() {
   const [visitors, setVisitors] = useState<VisitorRegistration[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
-  // ----------------------------
-  // FETCH VISITORS
-  // ----------------------------
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
+
   const fetchVisitors = useCallback(async () => {
     try {
+      setLoading(true);
+
       const res = await fetch(URLS.VISITORS, {
         headers: getAuthHeaders(),
       });
 
       const data = await res.json();
-      console.log("VISITOR API RESPONSE:", data);
 
-      const list = Array.isArray(data)
-        ? data
-        : Array.isArray(data?.data)
-        ? data.data
-        : Array.isArray(data?.results)
-        ? data.results
-        : [];
+      // DRF pagination support
+      const list =
+        Array.isArray(data)
+          ? data
+          : Array.isArray(data?.results)
+          ? data.results
+          : [];
 
       setVisitors(list);
-    } catch (error) {
-      console.error("Visitor fetch error:", error);
+    } catch (err) {
+      console.error("Failed to fetch visitors", err);
       setVisitors([]);
     } finally {
       setLoading(false);
@@ -41,45 +43,54 @@ export function useVisitors() {
     fetchVisitors();
   }, [fetchVisitors]);
 
-  // ----------------------------
-  // DELETE VISITOR
-  // ----------------------------
-  const handleDeleteVisitor = async (id: number) => {
+  // STATUS UPDATE
+  const updateStatus = async (
+    id: number,
+    newStatus: VisitorRegistration["status"]
+  ) => {
     try {
-      const res = await fetch(`${URLS.VISITORS}/${id}`, {
-        method: "DELETE",
-        headers: getAuthHeaders(),
+      setIsUpdating(true);
+
+      const res = await fetch(`${URLS.VISITORS}${id}/`, {
+        method: "PATCH",
+        headers: {
+          ...getAuthHeaders(),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
       });
 
-      if (!res.ok) {
-        toast.error("Failed to delete visitor");
-        return;
-      }
+      if (!res.ok) throw new Error("Update failed");
 
-      // Remove visitor locally
-      setVisitors((prev) => prev.filter((v) => v.id !== id));
+      toast.success("Visitor status updated");
 
-      toast.success("Visitor deleted successfully");
-    } catch (error) {
-      console.error("Delete visitor error:", error);
-      toast.error("Error deleting visitor");
+      await fetchVisitors();
+    } catch (err) {
+      toast.error("Failed to update visitor status");
+    } finally {
+      setIsUpdating(false);
     }
   };
 
-  // ----------------------------
-  // RETURN HOOK DATA
-  // ----------------------------
+  // STATS
+  const stats = {
+    totalVisitors: visitors.length,
+    pendingVisitors: visitors.filter((v) => v.status === "pending").length,
+    contactedVisitors: visitors.filter((v) => v.status === "contacted").length,
+    paidVisitors: visitors.filter((v) => v.status === "paid").length,
+    rejectedVisitors: visitors.filter((v) => v.status === "rejected").length,
+  };
+
   return {
     visitors,
-    searchQuery,
     loading,
+    isUpdating,
+    searchQuery,
     setSearchQuery,
-    handleDeleteVisitor, // <-- added correctly
-    stats: {
-      totalVisitors: visitors.length,
-      contactedVisitors: visitors.filter((v) => v.status === "contacted")
-        .length,
-      paidVisitors: visitors.filter((v) => v.status === "paid").length,
-    },
+    filterStatus,
+    setFilterStatus,
+    updateStatus,
+    stats,
+    refetch: fetchVisitors,
   };
 }
