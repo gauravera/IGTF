@@ -65,7 +65,7 @@ export default function SalesDashboardClient() {
     return (
         <div className="min-h-screen bg-background">
             {/* HEADER */}
-            <Header activeTab={activeTab} onTabChange={handleTabChange} onLogout={handleLogout} role="sales"/>
+            <Header activeTab={activeTab} onTabChange={handleTabChange} onLogout={handleLogout} role="sales" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* --- EXHIBITORS TAB --- */}
@@ -89,7 +89,10 @@ export default function SalesDashboardClient() {
                         visitors={visitorsHook.visitors}
                         searchQuery={visitorsHook.searchQuery}
                         setSearchQuery={visitorsHook.setSearchQuery}
-                        handleDeleteVisitor={visitorsHook.handleDeleteVisitor}
+                        filterStatus={visitorsHook.filterStatus}
+                        setFilterStatus={visitorsHook.setFilterStatus}
+                        updateStatus={visitorsHook.updateStatus}
+                        isUpdating={visitorsHook.isUpdating}
                         stats={visitorsHook.stats}
                         loading={visitorsHook.loading}
                     />
