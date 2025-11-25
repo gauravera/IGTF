@@ -14,7 +14,7 @@ interface CategoryData {
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const CATEGORY_API_URL = `${BASE_URL}/api/categories/`;
+const CATEGORY_API_URL = `${BASE_URL}/categories/`;
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<{ name: string; imageUrl: string }[]>([]);

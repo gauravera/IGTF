@@ -8,7 +8,7 @@ import { Footer } from "@/components/footer";
 
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const GALLERY_API_URL = `${BASE_URL}/api/gallery/`;
+const GALLERY_API_URL = `${BASE_URL}/gallery/`;
 
 interface GalleryItem {
   id: number;
