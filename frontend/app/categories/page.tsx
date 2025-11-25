@@ -13,7 +13,8 @@ interface CategoryData {
   icon: string;
 }
 
-const CATEGORY_API_URL = "http://localhost:8000/api/categories/";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+const CATEGORY_API_URL = `${BASE_URL}/api/categories/`;
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<{ name: string; imageUrl: string }[]>([]);

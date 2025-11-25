@@ -6,7 +6,9 @@ import { Navbar } from "@/components/navbar";
 import { ChatBot } from "@/components/chat-bot";
 import { Footer } from "@/components/footer";
 
-const GALLERY_API_URL = "http://localhost:8000/api/gallery/";
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+const GALLERY_API_URL = `${BASE_URL}/api/gallery/`;
 
 interface GalleryItem {
   id: number;
