@@ -10,12 +10,7 @@ from decouple import config
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config("SECRET_KEY", default="dev-secret-key-change-in-prod")
-DEBUG = config("DEBUG", default=True, cast=bool)
-
-ALLOWED_HOSTS = config(
-    "ALLOWED_HOSTS",
-    cast=lambda v: [s.strip() for s in v.split(",")]
-)
+DEBUG = True
 
 
 # ==============================================
@@ -90,9 +85,32 @@ TEMPLATES = [
 
 
 # ==============================================
+# CORS, CSRF and host configuration via environment variables
+# ==============================================
+
+# Whether to allow all origins (useful for development). Default False.
+CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
+
+# CORS allowed origins (comma separated)
+_raw_cors = config('CORS_ALLOWED_ORIGINS', default='https://indoglobaltradefair.com')
+CORS_ALLOWED_ORIGINS = [o.strip() for o in _raw_cors.split(',') if o.strip()]
+
+# CSRF trusted origins (comma separated)
+_raw_csrf = config('CSRF_TRUSTED_ORIGINS', default='https://indoglobaltradefair.com')
+CSRF_TRUSTED_ORIGINS = [o.strip() for o in _raw_csrf.split(',') if o.strip()]
+
+# Allowed hosts (comma separated). Do NOT include '*' in production.
+_raw_hosts = config('ALLOWED_HOSTS', default='indoglobaltradefair.com,.elasticbeanstalk.com')
+ALLOWED_HOSTS = [h.strip() for h in _raw_hosts.split(',') if h.strip()]
+
+# Frontend URL used by the backend (for links, CORS checks, etc.)
+FRONTEND_URL = config('FRONTEND_URL', default='https://indoglobaltradefair.com')
+
+
+# ==============================================
 # DATABASE (Auto-switch local vs production)
 # ==============================================
-USE_SQLITE = config("USE_SQLITE", default=True, cast=bool)
+USE_SQLITE = config("USE_SQLITE")
 
 if USE_SQLITE:
     DATABASES = {
@@ -198,15 +216,6 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
-
-
-# ==============================================
-# CORS
-# ==============================================
-raw_origins = config("CORS_ALLOWED_ORIGINS", default="")
-CORS_ALLOWED_ORIGINS = [o.strip() for o in raw_origins.split(",") if o.strip()]
-
-CORS_ALLOW_CREDENTIALS = True
 
 
 # ==============================================
